@@ -1,6 +1,43 @@
-# 📝 수학 오답노트 자동 생성기
+# ☀️ SolarNote
+
+> **Upstage API 기반 AI 수학 오답노트 자동 생성기**
+
+[![Upstage](https://img.shields.io/badge/Powered%20by-Upstage-FF6B35)](https://www.upstage.ai/)
+[![Solar LLM](https://img.shields.io/badge/LLM-Solar%20Pro-FFB347)](https://www.upstage.ai/solar-llm)
+[![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B)](https://streamlit.io/)
 
 학생이 틀린 수학 문제 사진을 업로드하면 **유사문제 5개**와 **상세 풀이**를 자동으로 생성하는 AI 멀티 에이전트 시스템입니다.
+
+## Upstage API 활용
+
+이 프로젝트는 **Upstage**의 AI API를 핵심으로 활용합니다:
+
+| Upstage API | 용도 | 역할 |
+|-------------|------|------|
+| **Document Parse** | OCR | 수학 문제 이미지에서 텍스트/수식 추출 |
+| **Information Extract** | 정보 추출 | 문제, 조건, 보기 등 구조화된 필드 분리 |
+| **Solar Pro** | LLM | 개념 분류, 유사문제 생성, 풀이 작성, 오답노트 정리 |
+
+### Multi-Agent 파이프라인
+
+```
+이미지 업로드
+    ↓
+┌─────────────────────────────────────────────────────────────┐
+│  OrchestratorAgent (워크플로우 조율)                          │
+│                                                             │
+│  ① ParserAgent ──────→ Upstage Document Parse API          │
+│  ② ExtractorAgent ───→ Upstage Information Extract API     │
+│  ③ ConceptAgent ─────→ Upstage Solar Pro (개념/난이도 분류)  │
+│  ④ ProblemAgent ─────→ Upstage Solar Pro (유사문제 5개 생성) │
+│  ⑤ SolutionAgent ────→ Upstage Solar Pro (단계별 풀이 작성)  │
+│  ⑥ NoteAgent ────────→ Upstage Solar Pro (오답노트 정리)     │
+└─────────────────────────────────────────────────────────────┘
+    ↓
+오답노트 출력 (유사문제 5개 + 상세 풀이 + 학습 조언)
+```
+
+**문제 1개당 Upstage API 호출**: 총 6회
 
 ## 주요 기능
 
@@ -10,67 +47,45 @@
 - ✏️ **상세 풀이**: 원본 + 유사문제 단계별 풀이 제공
 - 📋 **오답노트 정리**: 학습 조언, 공식 정리, 다음 학습 추천
 
-## 기술 스택
-
-- **Frontend**: Streamlit
-- **Backend**: Python
-- **AI API**: Upstage (Solar, Document Parse, Information Extract)
-
 ## 설치 및 실행
 
 ```bash
 # 1. 의존성 설치
 pip install -r requirements.txt
 
-# 2. API 키 설정
-# .env 파일에 Upstage API 키 입력
-UPSTAGE_API_KEY=your_api_key_here
+# 2. Upstage API 키 설정 (.env 파일 생성)
+echo "UPSTAGE_API_KEY=your_api_key_here" > .env
 
 # 3. 앱 실행
 streamlit run app.py
 ```
 
+> Upstage API 키는 [Upstage Console](https://console.upstage.ai/)에서 발급받을 수 있습니다.
+
 ## 프로젝트 구조
 
 ```
-upstage-project/
+SolarNote/
 ├── app.py                    # Streamlit 메인 앱
-├── config.py                 # 환경 설정
-├── agents/                   # 멀티 에이전트
-│   ├── base_agent.py         # 베이스 에이전트 클래스
-│   ├── orchestrator_agent.py # 총괄 에이전트
-│   ├── parser_agent.py       # 이미지 → 텍스트 (Document Parse)
-│   ├── extractor_agent.py    # 필드 추출 (Information Extract)
-│   ├── concept_agent.py      # 개념 분류 (Solar)
-│   ├── problem_agent.py      # 유사문제 생성 (Solar)
-│   ├── solution_agent.py     # 풀이 작성 (Solar)
-│   └── note_agent.py         # 오답노트 정리 (Solar)
+├── config.py                 # 환경 설정 (API URL, 모델명, 타임아웃)
+├── agents/                   # 멀티 에이전트 시스템
+│   ├── orchestrator_agent.py # 전체 파이프라인 조율
+│   ├── parser_agent.py       # Document Parse API 호출
+│   ├── extractor_agent.py    # Information Extract API 호출
+│   ├── concept_agent.py      # Solar LLM - 개념 분류
+│   ├── problem_agent.py      # Solar LLM - 유사문제 생성
+│   ├── solution_agent.py     # Solar LLM - 풀이 작성
+│   └── note_agent.py         # Solar LLM - 오답노트 정리
 ├── core/
-│   └── upstage_client.py     # Upstage API 클라이언트
+│   └── upstage_client.py     # Upstage API 클라이언트 래퍼
 ├── models/
-│   └── schemas.py            # 데이터 모델
+│   └── schemas.py            # 데이터 모델 (dataclass)
 ├── prompts/
-│   └── templates.py          # 프롬프트 템플릿
+│   └── templates.py          # LLM 프롬프트 템플릿
 └── ui/
-    └── components.py         # UI 컴포넌트
+    ├── components.py         # Streamlit UI 컴포넌트
+    └── styles.py             # Solar 테마 CSS
 ```
-
-## 에이전트 파이프라인
-
-```
-이미지 → Parser → Extractor → Concept → Problem → Solution → Note → 오답노트
-         (OCR)   (필드분리)   (분류)   (생성)    (풀이)    (정리)
-```
-
-## API 사용량
-
-| API | 역할 | 호출 횟수 |
-|-----|------|----------|
-| Document Parse | OCR | 1회 |
-| Information Extract | 필드 추출 | 1회 |
-| Solar | LLM (분류/생성/풀이/정리) | 4회 |
-
-**총**: 문제 1개당 약 6회 API 호출
 
 ## 타겟 사용자
 
