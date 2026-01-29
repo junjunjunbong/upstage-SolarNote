@@ -24,3 +24,6 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Personal
+자기소개서.md
