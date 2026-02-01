@@ -1,7 +1,7 @@
-import json
 from agents.base_agent import BaseAgent
 from models.schemas import ExtractedFields, ConceptInfo, SimilarProblem, SolutionResult, ErrorNote, ProblemSolution
-from prompts.templates import NOTE_PROMPT
+from prompts.templates import NOTE_PROMPT, NOTE_SYSTEM_PROMPT
+from config import GENERATION_PARAMS
 
 
 class NoteAgent(BaseAgent):
@@ -41,11 +41,21 @@ class NoteAgent(BaseAgent):
         )
 
         try:
-            response = self.client.chat_completion([
+            # Solar Pro 3: system 메시지 + 파라미터 적용
+            messages = [
+                {"role": "system", "content": NOTE_SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
-            ])
+            ]
+            
+            params = GENERATION_PARAMS["note"]
+            response = self.client.chat_completion(
+                messages=messages,
+                temperature=params["temperature"],
+                max_tokens=params["max_tokens"],
+                top_p=params["top_p"]
+            )
 
-            data = json.loads(response)
+            data = self.extract_json(response)
 
             note = ErrorNote(
                 title=data.get("title", concept.topic),

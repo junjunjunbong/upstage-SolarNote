@@ -111,24 +111,20 @@ def render_error_note(note: ErrorNote):
     </div>
     """, unsafe_allow_html=True)
 
-    # 탭 기반 UI
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "📌 원본문제",
+    # 탭 기반 UI (3탭: 개념정리, 유사문제, 학습조언)
+    tab1, tab2, tab3 = st.tabs([
         "📚 개념정리",
         "🔄 유사문제",
         "💡 학습조언"
     ])
 
     with tab1:
-        _render_original_problem_tab(note)
-
-    with tab2:
         _render_concept_tab(note)
 
-    with tab3:
+    with tab2:
         _render_similar_problems_tab(note)
 
-    with tab4:
+    with tab3:
         _render_study_tips_tab(note)
 
 

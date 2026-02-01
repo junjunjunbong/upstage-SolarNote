@@ -1,7 +1,7 @@
-import json
 from agents.base_agent import BaseAgent
 from models.schemas import ExtractedFields, ConceptInfo, SimilarProblem, ProblemSolution, SolutionResult
-from prompts.templates import SOLUTION_PROMPT
+from prompts.templates import SOLUTION_PROMPT, SOLUTION_SYSTEM_PROMPT
+from config import GENERATION_PARAMS
 
 
 class SolutionAgent(BaseAgent):
@@ -23,11 +23,21 @@ class SolutionAgent(BaseAgent):
         )
 
         try:
-            response = self.client.chat_completion([
+            # Solar Pro 3: system 메시지 + 파라미터 적용
+            messages = [
+                {"role": "system", "content": SOLUTION_SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
-            ])
+            ]
+            
+            params = GENERATION_PARAMS["solution"]
+            response = self.client.chat_completion(
+                messages=messages,
+                temperature=params["temperature"],
+                max_tokens=params["max_tokens"],
+                top_p=params["top_p"]
+            )
 
-            data = json.loads(response)
+            data = self.extract_json(response)
 
             original_data = data.get("original", {})
             original_solution = ProblemSolution(

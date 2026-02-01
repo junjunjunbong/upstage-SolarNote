@@ -16,7 +16,13 @@ class ExtractorAgent(BaseAgent):
                 schema=EXTRACTION_SCHEMA
             )
 
-            data = result.get("extraction", {})
+            # 공식 API 응답: result 키에 실제 데이터가 있음
+            # https://console.upstage.ai/docs
+            data = result.get("result", {})
+            
+            # result가 비어있으면 extraction 키 fallback (이전 버전 호환)
+            if not data:
+                data = result.get("extraction", {})
 
             extracted = ExtractedFields(
                 problem_text=data.get("problem_text", parsed.raw_text),
