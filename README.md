@@ -3,7 +3,7 @@
 > **Upstage API 기반 AI 수학 오답노트 자동 생성기**
 
 [![Upstage](https://img.shields.io/badge/Powered%20by-Upstage-FF6B35)](https://www.upstage.ai/)
-[![Solar LLM](https://img.shields.io/badge/LLM-Solar%20Pro-FFB347)](https://www.upstage.ai/solar-llm)
+[![Solar LLM](https://img.shields.io/badge/LLM-Solar%20Pro%203-FFB347)](https://www.upstage.ai/solar-llm)
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B)](https://streamlit.io/)
 
 학생이 틀린 수학 문제 사진을 업로드하면 **유사문제 5개**와 **상세 풀이**를 자동으로 생성하는 AI 멀티 에이전트 시스템입니다.
@@ -72,10 +72,11 @@ SolarNote/
 │   ├── orchestrator_agent.py # 전체 파이프라인 조율
 │   ├── parser_agent.py       # Document Parse API 호출
 │   ├── extractor_agent.py    # Information Extract API 호출
-│   ├── concept_agent.py      # Solar LLM - 개념 분류
-│   ├── problem_agent.py      # Solar LLM - 유사문제 생성
-│   ├── solution_agent.py     # Solar LLM - 풀이 작성
-│   └── note_agent.py         # Solar LLM - 오답노트 정리
+│   ├── base_agent.py         # 에이전트 베이스 클래스
+│   ├── concept_agent.py      # Solar Pro 3 - 개념 분류
+│   ├── problem_agent.py      # Solar Pro 3 - 유사문제 생성
+│   ├── solution_agent.py     # Solar Pro 3 - 풀이 작성
+│   └── note_agent.py         # Solar Pro 3 - 오답노트 정리
 ├── core/
 │   └── upstage_client.py     # Upstage API 클라이언트 래퍼
 ├── models/

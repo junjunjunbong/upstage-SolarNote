@@ -38,7 +38,7 @@ UPSTAGE_API_KEY=your_api_key_here
     → 최종 오답 노트 출력
 ```
 
-### 폴터 구조
+### 폴더 구조
 
 - `agents/` - 6개의 특화된 에이전트 클래스 (BaseAgent 상속)
 - `core/upstage_client.py` - Upstage API 래퍼 (최신 파라미터 지원)
@@ -49,7 +49,7 @@ UPSTAGE_API_KEY=your_api_key_here
 ### 주요 설정값 (config.py)
 
 ```python
-SOLAR_MODEL = "solar-pro-3"  # 최신 MoE 모델 (102B params, 12B active)
+SOLAR_MODEL = "solar-pro3"  # 최신 MoE 모델
 REQUEST_TIMEOUT = 60.0
 DOCUMENT_PARSE_TIMEOUT = 120.0
 MAX_RETRIES = 2
@@ -67,7 +67,7 @@ GENERATION_PARAMS = {
 
 ### API 엔드포인트
 
-- **Chat Completions**: `POST /v1/solar/chat/completions`
+- **Chat Completions**: `POST /v1/chat/completions`
   - 지원 파라미터: `model`, `messages`, `temperature`, `max_tokens`, `top_p`, `top_k`, `presence_penalty`, `frequency_penalty`, `stream`
   - System 메시지 지원
 
